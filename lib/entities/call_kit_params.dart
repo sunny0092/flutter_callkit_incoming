@@ -12,6 +12,7 @@ class CallKitParams {
   const CallKitParams({
     this.id,
     this.nameCaller,
+    this.phoneNumber,
     this.appName,
     this.avatar,
     this.handle,
@@ -29,6 +30,7 @@ class CallKitParams {
 
   final String? id;
   final String? nameCaller;
+  final String? phoneNumber;
   final String? appName;
   final String? avatar;
   final String? handle;
@@ -43,8 +45,7 @@ class CallKitParams {
   final AndroidParams? android;
   final IOSParams? ios;
 
-  factory CallKitParams.fromJson(Map<String, dynamic> json) =>
-      _$CallKitParamsFromJson(json);
+  factory CallKitParams.fromJson(Map<String, dynamic> json) => _$CallKitParamsFromJson(json);
 
   Map<String, dynamic> toJson() => _$CallKitParamsToJson(this);
 }

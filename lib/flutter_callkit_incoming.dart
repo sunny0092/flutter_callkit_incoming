@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 
@@ -12,10 +14,8 @@ import 'entities/entities.dart';
 /// * callConnected(dynamic)
 
 class FlutterCallkitIncoming {
-  static const MethodChannel _channel =
-      MethodChannel('flutter_callkit_incoming');
-  static const EventChannel _eventChannel =
-      EventChannel('flutter_callkit_incoming_events');
+  static const MethodChannel _channel = MethodChannel('flutter_callkit_incoming');
+  static const EventChannel _eventChannel = EventChannel('flutter_callkit_incoming_events');
 
   /// Listen to event callback from [FlutterCallkitIncoming].
   ///
@@ -34,8 +34,7 @@ class FlutterCallkitIncoming {
   /// Event.ACTION_CALL_TOGGLE_AUDIO_SESSION - only iOS
   /// Event.DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP - only iOS
   /// }
-  static Stream<CallEvent?> get onEvent =>
-      _eventChannel.receiveBroadcastStream().map(_receiveCallEvent);
+  static Stream<CallEvent?> get onEvent => _eventChannel.receiveBroadcastStream().map(_receiveCallEvent);
 
   /// Show Callkit Incoming.
   /// On iOS, using Callkit. On Android, using a custom UI.
@@ -73,8 +72,7 @@ class FlutterCallkitIncoming {
   /// On iOS, using Callkit(update call ui).
   /// On Android, Nothing(only callback event listener).
   static Future<bool> isMuted(String id) async {
-    return (await _channel.invokeMethod("isMuted", {'id': id})) as bool? ??
-        false;
+    return (await _channel.invokeMethod("isMuted", {'id': id})) as bool? ?? false;
   }
 
   /// Hold an Ongoing call.
@@ -108,6 +106,20 @@ class FlutterCallkitIncoming {
   /// On Android: only return last call
   static Future<dynamic> activeCalls() async {
     return await _channel.invokeMethod("activeCalls");
+  }
+
+  /// On iOS: return true if success.
+  /// On Android: only return false.
+  static Future<bool> reportCallEnd([String? uuid]) async {
+    if (Platform.isAndroid) return false;
+
+    try {
+      final result = await _channel.invokeMethod<bool?>("reportCallEnd", {'uuid': uuid});
+
+      return result ?? false;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   /// Get device push token VoIP.
@@ -146,6 +158,9 @@ class FlutterCallkitIncoming {
     if (data is Map) {
       event = Event.values.firstWhere((e) => e.name == data['event']);
       body = Map<String, dynamic>.from(data['body']);
+
+      // log("$event ${body['id']}}", name: 'FlutterCallkitIncoming event');
+
       return CallEvent(body, event);
     }
     return null;
