@@ -654,9 +654,11 @@ public class SwiftFlutterCallkitIncomingPlugin: NSObject, FlutterPlugin, CXProvi
     }
     
     public func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
-        guard let call = self.callManager.callWithUUID(uuid: action.callUUID) else{
-            action.fail()
-            return
+         let call: Call
+        if let existingCall = self.callManager.callWithUUID(uuid: action.callUUID) {
+            call = existingCall
+        } else {
+            call = Call(uuid: action.callUUID, data: self.data!)
         }
         // self.reactivateAudioSession()
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1200)) {
@@ -666,10 +668,14 @@ public class SwiftFlutterCallkitIncomingPlugin: NSObject, FlutterPlugin, CXProvi
             self?.sharedProvider?.reportOutgoingCall(with: call.uuid, connectedAt: call.connectedData)
         }
         self.answerCall = call
+        print("SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ACCEPT, \(self.data?.toJSON())")
         sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ACCEPT, self.data?.toJSON())
+        print("SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ACCEPT")
         if let appDelegate = UIApplication.shared.delegate as? CallkitIncomingAppDelegate {
+            print("SwiftFlutterCallkitIncomingPlugin onAccept")
             appDelegate.onAccept(call, action)
         }else {
+            print("SwiftFlutterCallkitIncomingPlugin fulfill")
             action.fulfill()
         }
     }

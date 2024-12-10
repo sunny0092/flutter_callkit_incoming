@@ -143,8 +143,6 @@ class CallkitIncomingActivity : Activity() {
                     (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
                             or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION), false
             )
-            window.statusBarColor = Color.TRANSPARENT
-            window.navigationBarColor = Color.TRANSPARENT
         }
     }
 
