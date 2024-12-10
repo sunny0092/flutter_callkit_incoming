@@ -5,7 +5,7 @@ class CallEvent {
 
   CallEvent(this.body, this.event);
   @override
-  String toString() => 'CallEvent(body: $body, event: $event)';
+  String toString() => 'CallEvent( body: $body, event: $event)';
 }
 
 enum Event {
@@ -23,7 +23,6 @@ enum Event {
   actionCallToggleGroup,
   actionCallToggleAudioSession,
   actionCallCustom,
-  pushKitIncomingCall,
 }
 
 /// Using extension for backward compatibility Dart SDK 2.17.0 and lower
@@ -58,8 +57,6 @@ extension EventX on Event {
         return 'com.hiennv.flutter_callkit_incoming.ACTION_CALL_TOGGLE_AUDIO_SESSION';
       case Event.actionCallCustom:
         return 'com.hiennv.flutter_callkit_incoming.ACTION_CALL_CUSTOM';
-      case Event.pushKitIncomingCall:
-        return 'com.hiennv.flutter_callkit_incoming.PUSH_KIT_INCOMING_CALL';
     }
   }
 }
